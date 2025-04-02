@@ -1,0 +1,8 @@
+{
+  "require": {
+      "propel/propel": "~2.0@beta"
+  },
+  "autoload": {
+      "psr-0": {"": "src/"}
+  }
+}
