@@ -1,7 +1,6 @@
 <!-- Database Config -->
 
 <?php
-  require 'vendor/autoload.php';
 
   use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -13,7 +12,7 @@
       'host'      => '127.0.0.1',
       'database'  => 'font_database',
       'username'  => 'root',
-      'password'  => '',
+      'password'  => 'password',
       'charset'   => 'utf8',
       'collation' => 'utf8_unicode_ci',
       'prefix'    => '',
@@ -23,4 +22,7 @@
   $capsule->setAsGlobal();
   $capsule->bootEloquent();
 
-  echo "Database connection successful!";
+  // Enable query logging
+  $capsule->getConnection()->enableQueryLog();
+
+
