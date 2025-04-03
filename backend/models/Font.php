@@ -5,7 +5,7 @@
   use Illuminate\Database\Eloquent\Factories\HasFactory;
 
   class Font extends Model {
-    use HasFactory, SoftDeletes;
+      use HasFactory, SoftDeletes;
 
       protected $table = 'fonts';
       protected $fillable = ['name', 'status', 'url'];
@@ -17,6 +17,11 @@
           'updated_at' => 'datetime',
           'deleted_at' => 'datetime',
       ];
+
+      public function fontGroup()
+      {
+        return $this->belongsTo(FontGroup::class);
+      }
 
     }
   ?>
