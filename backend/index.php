@@ -5,6 +5,7 @@
 
   use Bramus\Router\Router;
   use backend\controllers\FontsController;
+  use backend\controllers\FontGroupsController;
 
   // settings for the Header Resopnse
   header('Content-Type: application/json');
@@ -41,6 +42,24 @@
     $controller = new FontsController();
     echo $controller->destroy($id);
   });
+
+
+  // resources font groups
+  $router->get('/font_groups', function() {
+    $controller = new FontGroupsController();
+    echo $controller->index();
+  });
+
+  $router->get('/font_groups/{id}', function($id) {
+    $controller = new FontGroupsController();
+    echo $controller->show($id);
+  });
+
+  $router->post('/font_groups', function() {
+    $controller = new FontGroupsController();
+    echo $controller->store();
+  });
+
 
   // Execute the router
   $router->run();

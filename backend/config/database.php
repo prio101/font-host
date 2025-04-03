@@ -9,9 +9,9 @@
   $capsule->addConnection([
       'driver'    => 'mysql',
       'host'      => '127.0.0.1',
-      'database'  => 'font_database',
-      'username'  => 'root',
-      'password'  => 'password',
+      'database'  => getenv('DATABASE_NAME') ?: 'font_database',
+      'username'  => getenv('DATABASE_USER') ?: 'root',
+      'password'  => getenv('DATABASE_PASSWORD') ?: 'password',
       'charset'   => 'utf8',
       'collation' => 'utf8_unicode_ci',
       'prefix'    => '',

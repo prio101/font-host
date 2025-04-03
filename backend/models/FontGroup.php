@@ -4,6 +4,8 @@
     use Illuminate\Database\Eloquent\SoftDeletes;
     use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
+
     class FontGroup extends Model {
       use HasFactory, SoftDeletes;
 
