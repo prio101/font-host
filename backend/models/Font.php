@@ -23,5 +23,11 @@
         return $this->belongsTo(FontGroup::class);
       }
 
+      public function updateFontGroupToNull($fontGroupId)
+      {
+        Font::Where('font_group_id', $fontGroupId)
+          ->update(['font_group_id' => null]);
+      }
+
     }
   ?>

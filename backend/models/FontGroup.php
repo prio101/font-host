@@ -23,7 +23,7 @@
 
       public function fonts()
       {
-          return $this->hasMany(Font::class, 'group_id');
+          return $this->hasMany(Font::class, 'font_group_id');
       }
 
       public function getFonts()

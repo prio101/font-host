@@ -1,0 +1,11 @@
+{
+  "name": "font-group-system",
+  "version": "1.0.0",
+  "description": "Frontend dependencies for the Front Group System",
+  "main": "frontend/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mahabub Islam",
+  "license": "ISC"
+}

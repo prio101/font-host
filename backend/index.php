@@ -8,7 +8,16 @@
   use backend\controllers\FontGroupsController;
 
   // settings for the Header Resopnse
-  header('Content-Type: application/json');
+  // Enable CORS Middleware
+  header("Access-Control-Allow-Origin: *");
+  header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+  header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+  // Handle preflight (OPTIONS) requests
+  if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+      http_response_code(200);
+      exit;
+  }
 
   // Initialize the router with the Bramus Router
   $router = new Router();
@@ -58,6 +67,11 @@
   $router->post('/font_groups', function() {
     $controller = new FontGroupsController();
     echo $controller->store();
+  });
+
+  $router->put('/font_groups/{id}', function($id) {
+    $controller = new FontGroupsController();
+    echo $controller->update($id);
   });
 
 
