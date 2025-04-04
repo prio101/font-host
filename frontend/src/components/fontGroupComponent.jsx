@@ -6,13 +6,14 @@ const FontGroupComponent = () => {
   const [uploadStatus, setUploadStatus] = useState({ show: false, message: "" });
   const [fonts, setFonts] = useState([]);
   const [fontRows, setFontRows] = useState(1);
+  const [fontData, setFontData] = useState([]);
 
   useEffect(() => {
     const fetchFonts = async () => {
       try {
         const response = await fetch("http://localhost:8000/fonts");
         const data = await response.json();
-        console.log("Fonts data:", data);
+
         if(data.status == 'success') {
           setFonts(data.data);
         } else {
@@ -28,32 +29,58 @@ const FontGroupComponent = () => {
   , []);
 
   const handleAddRow = () => {
-    console.log("Add Row triggered");
     setFontRows(fontRows + 1);
   }
 
   const handleSelectFontId = (event) => {
     const selectedFontId = event.target.value;
+    setFontGroupFontIds([...fontGroupFontIds, selectedFontId]);
+    setFontData([ ...fontData, { id: selectedFontId,
+                                 name: event }]);
+  };
+
+  console.log("Font Data", fontData);
+  const handleRemove = (event) => {
+    console.log("Remove triggered");
+    const selectedFontId = event.target.value;
     setFontGroupFontIds((prevFontGroupFontIds) => {
-        if (prevFontGroupFontIds.includes(selectedFontId)) {
-          return prevFontGroupFontIds.filter((id) => id !== selectedFontId);
+      return prevFontGroupFontIds.filter((id) => id !== selectedFontId);
+    });
+    setFontRows(fontRows - 1);
+  };
+
+  const handleFontGroup = (event) => {
+    console.log("Font group creation triggered");
+    event.preventDefault();
+    const body = {
+      name: fontGroupName,
+      fonts: fontGroupFontIds,
+    }
+
+    console.log("Font group name:", fontGroupName);
+    console.log("Font group font ids:", fontGroupFontIds);
+    fetch("http://localhost:8000/font_groups", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          setUploadStatus({ show: true, message: "Font group created successfully!" });
+          setTimeout(() => {
+            setUploadStatus({ show: false, message: "" });
+          }, 3000);
         } else {
-
-          setFonts((prevFonts) => {
-            const selectedFont = prevFonts.find(font => font.id === selectedFontId);
-            if (selectedFont) {
-              return prevFonts.filter(font => font.id !== selectedFontId);
-            }
-            return prevFonts;
-          }
-          );
-
-          return [...prevFontGroupFontIds, selectedFontId];
+          console.error("Error creating font group");
         }
       }
-    );
-
-    console.log("Selected Font IDs:", fontGroupFontIds);
+      )
+      .catch((error) => {
+        console.error("Error:", error);
+      }
+      );
   };
 
   return (
@@ -76,21 +103,31 @@ const FontGroupComponent = () => {
         <div className='p-2 flex flex-col w-full'>
 
           {[...Array(fontRows)].map((i) => (
-              <select
-                key={i}
-                value={fontGroupFontIds[i]}
-                onChange={handleSelectFontId}
-                className="border-2 border-gray-300 my-2 p-2 rounded w-40"
-              >
-                <option value="" disabled>
-                  Select Fonts
-                </option>
-                {fonts.map((font) => (
-                  <option key={font.id} value={font.id}>
-                    {font.name}
+              <>
+                <input
+                       key={i}
+                       type='text'
+                       placeholder="Font Name"
+                       className='border border-1 border-gray-300 p-2 rounded-md' />
+                <select
+                  key={i}
+                  value={fontGroupFontIds[i]}
+                  onChange={handleSelectFontId}
+                  className="border-2 border-gray-300 my-2 p-2 rounded w-40"
+                >
+                  <option value="" disabled>
+                    Select Fonts
                   </option>
-                ))}
-              </select>
+                  {fonts.map((font) => (
+                    <option key={font.id} value={font.id}>
+                      {font.name}
+                    </option>
+                  ))}
+                </select>
+
+
+                <button onClick={handleRemove}>Remove</button>
+              </>
             ))}
         </div>
 
@@ -101,7 +138,9 @@ const FontGroupComponent = () => {
             >
             Add Row +
           </button>
-          <button className="bg-blue-500 text-white p-2 rounded w-auto">
+          <button className="bg-blue-500 text-white p-2 rounded w-auto"
+            onClick={handleFontGroup}
+            >
             Create
           </button>
         </div>

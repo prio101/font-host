@@ -18,9 +18,9 @@
           'deleted_at' => 'datetime',
       ];
 
-      public function fontGroup()
+      public function fontGroupFont()
       {
-        return $this->belongsTo(FontGroup::class);
+          return $this->hasMany(FontGroupFont::class, 'font_id');
       }
 
       public function updateFontGroupToNull($fontGroupId)

@@ -3,13 +3,14 @@
   namespace backend\controllers;
   use backend\models\FontGroup;
   use backend\models\Font;
+  use backend\models\FontGroupFont;
   use backend\serializers\FontGroupsSerializer;
 
   class FontGroupsController extends BaseController
   {
       public function index()
       {
-          $fontGroups = FontGroup::where('deleted_at', null)->get();
+          $fontGroups = FontGroup::where('deleted_at', null)->with('fonts')->get();
 
           $serializer = new FontGroupsSerializer();
           return $serializer->serialize($fontGroups);
@@ -18,6 +19,7 @@
       public function show($id)
       {
           $fontGroup = FontGroup::find($id);
+          $fontGroup->load('fonts');
           if (!$fontGroup) {
               return json_encode(['status' => 'error',
                                   'message' => 'Font group not found']);
@@ -30,18 +32,29 @@
       public function store()
       {
           $req_data = $this->request->getContent();
-
           $data = json_decode($req_data, true);
 
           $fontGroup = new FontGroup();
-
           $fontGroup->name = $data['name'];
 
-          if (isset($data['fonts'])) {
-              $fontGroup->fonts()->attach($data['fonts']);
-          }
-
+          // Save the FontGroup first to generate an ID
           $fontGroup->save();
+
+          if (isset($data['fonts'])) {
+              foreach ($data['fonts'] as $fontId) {
+                  $font = Font::find($fontId);
+
+                  if ($font) {
+                      $fontGroupFont = new FontGroupFont();
+                      $fontGroupFont->font_group_id = $fontGroup->id; // Use the saved FontGroup ID
+                      $fontGroupFont->font_id = $fontId;
+                      $fontGroupFont->font_size = $font->font_size;
+                      $fontGroupFont->font_name = $font->name;
+
+                      $fontGroupFont->save();
+                  }
+              }
+          }
 
           return json_encode($fontGroup);
       }
@@ -59,13 +72,22 @@
           $fontGroup->name = $data['name'];
 
           if (isset($data['fonts'])) {
-              $font = new Font();
-              $font->updateFontGroupToNull($fontGroup->id);
+                // Delete existing font group fonts
+                FontGroupFont::where('font_group_id', $id)->delete();
 
-              foreach ($data['fonts'] as $fontId) {
-                  $font = Font::find($fontId);
-                  Font::where('id', $fontId)->update(['font_group_id' => $fontGroup->id]);
-              }
+                foreach ($data['fonts'] as $fontId) {
+                    $font = Font::find($fontId);
+
+                    if ($font) {
+                        $fontGroupFont = new FontGroupFont();
+                        $fontGroupFont->font_group_id = $id; // Use the provided ID
+                        $fontGroupFont->font_id = $fontId;
+                        $fontGroupFont->font_size = $font->font_size;
+                        $fontGroupFont->font_name = $font->name;
+
+                        $fontGroupFont->save();
+                    }
+                }
           }
 
           $fontGroup->save();
@@ -75,4 +97,17 @@
           return $serializer->serialize($fontGroup);
       }
 
+        public function destroy($id)
+        {
+            $fontGroup = FontGroup::find($id);
+            if (!$fontGroup) {
+                return json_encode(['status' => 'error',
+                                    'message' => 'Font group not found']);
+            }
+
+            $fontGroup->delete();
+
+            return json_encode(['status' => 'success',
+                                'message' => 'Font group deleted successfully']);
+        }
   }

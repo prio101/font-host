@@ -21,14 +21,19 @@
           'deleted_at' => 'datetime',
       ];
 
-      public function fonts()
-      {
-          return $this->hasMany(Font::class, 'font_group_id');
-      }
+        public function fontGroupFont()
+        {
+            return $this->hasMany(FontGroupFont::class, 'font_group_id');
+        }
 
-      public function getFonts()
-      {
-          return $this->fonts()->where('deleted_at', null)->get();
-      }
+        public function fonts()
+        {
+            return $this->hasManyThrough(Font::class, FontGroupFont::class, 'font_group_id', 'id', 'id', 'font_id');
+        }
+
+        public function getFonts()
+        {
+            return $this->fonts()->where('deleted_at', null)->get();
+        }
 
     }

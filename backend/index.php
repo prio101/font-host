@@ -75,6 +75,11 @@
     echo $controller->update($id);
   });
 
+  $router->delete('/font_groups/{id}', function($id) {
+    $controller = new FontGroupsController();
+    echo $controller->destroy($id);
+  });
+
 
   // Execute the router
   $router->run();
