@@ -28,13 +28,24 @@ const FontGroupComponent = () => {
   }
   , []);
 
+  const validateFontGroup = () => {
+    if(fontRows < 2) {
+      setUploadStatus({ show: true, message: "You have to select at least two fonts." });
+      setTimeout(() => {
+        setUploadStatus({ show: false, message: "" });
+      }, 3000);
+      return false;
+    }
+    return true;
+  }
+
   const handleAddRow = () => {
     setFontRows(fontRows + 1);
   }
 
   const handleSelectFontId = (event) => {
     const selectedFontId = event.target.value;
-    setFontGroupFontIds([...fontGroupFontIds, selectedFontId]);
+    setFontGroupFontIds((prevFontGroupFontIds) => [...prevFontGroupFontIds, selectedFontId]);
     setFontData([ ...fontData, { id: selectedFontId,
                                  name: event }]);
   };
@@ -52,6 +63,11 @@ const FontGroupComponent = () => {
   const handleFontGroup = (event) => {
     console.log("Font group creation triggered");
     event.preventDefault();
+
+    if (!validateFontGroup()) {
+      return;
+    }
+
     const body = {
       name: fontGroupName,
       fonts: fontGroupFontIds,
@@ -85,6 +101,13 @@ const FontGroupComponent = () => {
 
   return (
     <>
+      {uploadStatus.show && (
+        <div className="fixed top-0 right-0 p-4">
+          <div className="bg-green-500 text-white p-2 rounded">
+            {uploadStatus.message}
+          </div>
+        </div>
+      )}
       <div className="flex flex-col w-full m-2">
         <div className="p-2 flex flex-col items-start justify-between w-full">
           <h2 className='flex flex-row text-black font-semibold text-2xl'>

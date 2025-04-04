@@ -5,6 +5,7 @@
   use backend\models\Font;
   use backend\models\FontGroupFont;
   use backend\serializers\FontGroupsSerializer;
+  use backend\requestFormattor\FontGroupCheck;
 
   class FontGroupsController extends BaseController
   {
@@ -19,11 +20,11 @@
       public function show($id)
       {
           $fontGroup = FontGroup::find($id);
-          $fontGroup->load('fonts');
           if (!$fontGroup) {
               return json_encode(['status' => 'error',
                                   'message' => 'Font group not found']);
           }
+          $fontGroup->load('fonts');
 
           $serializer = new FontGroupsSerializer();
           return $serializer->serialize($fontGroup);
@@ -31,32 +32,39 @@
 
       public function store()
       {
-          $req_data = $this->request->getContent();
-          $data = json_decode($req_data, true);
+            $req_data = $this->request->getContent();
+            $data = json_decode($req_data, true);
+            $fontGroupCheck = new FontGroupCheck();
 
-          $fontGroup = new FontGroup();
-          $fontGroup->name = $data['name'];
+            if($fontGroupCheck->checkFontGroup($data)){
+                $fontGroup = new FontGroup();
+                $fontGroup->name = $data['name'];
 
-          // Save the FontGroup first to generate an ID
-          $fontGroup->save();
+                // Save the FontGroup first to generate an ID
+                $fontGroup->save();
 
-          if (isset($data['fonts'])) {
-              foreach ($data['fonts'] as $fontId) {
-                  $font = Font::find($fontId);
+                if (isset($data['fonts'])) {
+                    foreach ($data['fonts'] as $fontId) {
+                        $font = Font::find($fontId);
 
-                  if ($font) {
-                      $fontGroupFont = new FontGroupFont();
-                      $fontGroupFont->font_group_id = $fontGroup->id; // Use the saved FontGroup ID
-                      $fontGroupFont->font_id = $fontId;
-                      $fontGroupFont->font_size = $font->font_size;
-                      $fontGroupFont->font_name = $font->name;
+                        if ($font) {
+                            $fontGroupFont = new FontGroupFont();
+                            $fontGroupFont->font_group_id = $fontGroup->id; // Use the saved FontGroup ID
+                            $fontGroupFont->font_id = $fontId;
+                            $fontGroupFont->font_size = $font->font_size;
+                            $fontGroupFont->font_name = $font->name;
 
-                      $fontGroupFont->save();
-                  }
-              }
-          }
+                            $fontGroupFont->save();
+                        }
+                    }
+                }
 
-          return json_encode($fontGroup);
+                return json_encode($fontGroup);
+
+            } else {
+                return json_encode(['status' => 'error',
+                                    'message' => 'Error happened during font group creation']);
+            }
       }
 
       public function update($id){
