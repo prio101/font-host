@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const FontUploadComponent = () => {
   const [fontFile, setFontFile] = useState(null);
   const [fontName, setFontName] = useState("");
-  const [showUploadStatus, setShowUploadStatus] = useState([false, ""]);
+  const [showUploadStatus, setShowUploadStatus] = useState({ show: false, message: "" });
 
   const handleFontUpload = (event) => {
     console.log("Font upload triggered");
@@ -30,9 +30,9 @@ const FontUploadComponent = () => {
     })
       .then((response) => {
       if (response.ok) {
-        setShowUploadStatus([true, "Font uploaded successfully!"]);
+        setShowUploadStatus({ show: true, message: "Font uploaded successfully!" });
         setTimeout(() => {
-        setShowUploadStatus([false, ""]);
+        setShowUploadStatus({ show: false, message: "" });
         }, 3000);
       } else {
         console.error("Error uploading font");
@@ -46,6 +46,14 @@ const FontUploadComponent = () => {
 
   return (
     <>
+      {showUploadStatus.show && (
+        <div className="fixed top-0 right-0 p-4">
+          <div className="bg-green-500 text-white p-2 rounded">
+            {showUploadStatus.message}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col items-center justify-center w-full">
         <div className="flex items-center justify-center w-72">
             <label for="dropzone-file" className="flex flex-col items-center
