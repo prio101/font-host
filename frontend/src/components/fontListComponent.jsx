@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import FontPreview from './fontPreview';
 
 const FontListComponent = () => {
   const [fonts, setFonts] = useState([]);
@@ -88,9 +89,10 @@ const FontListComponent = () => {
                 <tr key={font.id}>
                   <td className="px-4 py-2 border-b border-gray-200">{font.name}</td>
                   <td className="px-4 py-2 border-b border-gray-200">
-                    <div style={{ fontFamily: font.name, fontSize: '20px' }}>
-                      Example Text
-                    </div>
+                    <FontPreview
+                        fontName={font.name}
+                        fontFileUrl={`/public/assets/fonts/${font.name}`}
+                    />
                   </td>
                   <td className="px-4 py-2 border-b border-gray-200">
                     <button onClick={() => handleDelete(font)}

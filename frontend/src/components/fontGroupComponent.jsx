@@ -73,8 +73,6 @@ const FontGroupComponent = () => {
       fonts: fontGroupFontIds,
     }
 
-    console.log("Font group name:", fontGroupName);
-    console.log("Font group font ids:", fontGroupFontIds);
     fetch("http://localhost:8000/font_groups", {
       method: "POST",
       body: JSON.stringify(body),

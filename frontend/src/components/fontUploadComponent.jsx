@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
+import fontkit from 'fontkit';
 
 const FontUploadComponent = () => {
   const [fontFile, setFontFile] = useState(null);
   const [fontName, setFontName] = useState("");
   const [showUploadStatus, setShowUploadStatus] = useState({ show: false, message: "" });
+
+  const getFontFamilyName = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const font = fontkit.create(new Uint8Array(arrayBuffer));
+    return font.familyName;
+  }
 
   const handleFontUpload = (event) => {
     console.log("Font upload triggered");
@@ -12,7 +19,7 @@ const FontUploadComponent = () => {
     const file = event.target.files[0];
     if (file) {
       setFontFile(file);
-      setFontName(file["name"]);
+      setFontName(getFontFamilyName(file));
     }
 
     const formData = new FormData();

@@ -49,7 +49,7 @@
 
                         if ($font) {
                             $fontGroupFont = new FontGroupFont();
-                            $fontGroupFont->font_group_id = $fontGroup->id; // Use the saved FontGroup ID
+                            $fontGroupFont->font_group_id = $fontGroup->id;
                             $fontGroupFont->font_id = $fontId;
                             $fontGroupFont->font_size = $font->font_size;
                             $fontGroupFont->font_name = $font->name;
