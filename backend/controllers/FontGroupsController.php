@@ -38,7 +38,7 @@
 
             if($fontGroupCheck->checkFontGroup($data)){
                 $fontGroup = new FontGroup();
-                $fontGroup->name = $data['name'];
+                $fontGroup->name = $fontGroupCheck->checkxss($data['name']);
 
                 // Save the FontGroup first to generate an ID
                 $fontGroup->save();

@@ -15,33 +15,27 @@ const FontUploadComponent = () => {
       setFontName(file["name"]);
     }
 
-    const body = {
-      url: file,
-      name: file["name"],
-    }
-    console.log("Font file:", fontFile);
-    console.log("Font name:", file["name"]);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", file["name"]);
+
     fetch("http://localhost:8000/fonts", {
       method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      body: formData,
     })
       .then((response) => {
-      if (response.ok) {
-        setShowUploadStatus({ show: true, message: "Font uploaded successfully!" });
-        setTimeout(() => {
-        setShowUploadStatus({ show: false, message: "" });
-        }, 3000);
-      } else {
-        console.error("Error uploading font");
-      }
+        if (response.ok) {
+          setShowUploadStatus({ show: true, message: "Font uploaded successfully!" });
+          setTimeout(() => {
+            setShowUploadStatus({ show: false, message: "" });
+          }, 3000);
+        } else {
+          console.error("Error uploading font");
+        }
       })
       .catch((error) => {
-          console.error("Error:", error);
+        console.error("Error:", error);
       });
-
   }
 
   return (

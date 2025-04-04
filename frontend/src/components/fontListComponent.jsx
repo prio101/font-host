@@ -86,7 +86,7 @@ const FontListComponent = () => {
             <tbody>
               {fonts.map((font) => (
                 <tr key={font.id}>
-                  <td className="px-4 py-2 border-b border-gray-200">{formatFontName(font.name)}</td>
+                  <td className="px-4 py-2 border-b border-gray-200">{font.name}</td>
                   <td className="px-4 py-2 border-b border-gray-200">
                     <div style={{ fontFamily: font.name, fontSize: '20px' }}>
                       Example Text
